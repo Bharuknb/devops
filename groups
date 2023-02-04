@@ -1,0 +1,75 @@
+IAM Groups Membership Module
+
+
+locals {
+
+    memberships = {
+        "Membership1" = {
+           user  = ["user1","user2"]
+           group =    "group1" 
+   }
+
+        "Membership2" = {
+           user  = ["user3","user4"]
+           group =    "group2", 
+   }
+
+         "Membership3" = {
+           user  = ["user5","user6"]
+           group =    "group3", 
+   }
+
+    }
+}
+
+resource "aws_iam_group_membership" "developers" {
+    name = each.key
+    for_each =  local.memberships
+    users =  each.value.user
+    group = each.value.group
+
+}
+
+
+IAM users and Groups creation Module
+
+
+locals {
+    users = {
+        "developers" = {
+           user  = "user1"
+   }
+
+        "Engineers" = {
+           user  = "user2"
+   }
+
+         "Jenkins_engineers" = {
+           user  = "users3"
+    }
+  }
+}
+
+
+
+resource "aws_iam_user" "users" {
+    for_each = local.users
+    name = each.value.user
+    tags = {
+      Name  = each.key
+  }
+}
+
+Or 
+
+
+resource "aws_iam_user" "demo" {
+  count = "${length(var.username)}"
+  name = "${element(var.username,count.index )}"
+}
+
+variable "username" {
+  type = list(string)
+  default = ["tucker","annie","josh"]
+}
+
